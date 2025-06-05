@@ -22,7 +22,8 @@ import java.time.OffsetDateTime;
 public class Comment {
 
     @Id
-    @AttributeOverride(name = "value", column = @Column(name = "id", columnDefinition = "BIGINT"))
+    @AttributeOverride(name = "value", column = @Column(name = "id",
+            columnDefinition = "BIGINT"))
     private CommentId id;
     private String text;
     private String author;
