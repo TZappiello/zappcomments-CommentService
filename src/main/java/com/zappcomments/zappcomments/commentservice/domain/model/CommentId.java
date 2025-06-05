@@ -15,21 +15,21 @@ import java.util.Objects;
 @Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode
-public class SensorId implements Serializable {
+public class CommentId implements Serializable {
 
     private TSID value;
 
-    public SensorId(TSID value) {
+    public CommentId(TSID value) {
         Objects.nonNull(value);
         this.value = value;
     }
 
-    public SensorId(Long value) {
+    public CommentId(Long value) {
         Objects.nonNull(value);
         this.value = TSID.from(value);
     }
 
-    public SensorId(String value) {
+    public CommentId(String value) {
         Objects.nonNull(value);
         this.value = TSID.from(value);
     }

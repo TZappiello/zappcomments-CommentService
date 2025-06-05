@@ -23,7 +23,7 @@ public class Comment {
 
     @Id
     @AttributeOverride(name = "value", column = @Column(name = "id", columnDefinition = "BIGINT"))
-    private SensorId id;
+    private CommentId id;
     private String text;
     private String author;
 
