@@ -1,0 +1,40 @@
+package com.zappcomments.zappcomments.commentservice.api.controller;
+
+import com.zappcomments.zappcomments.commentservice.api.model.CommentInput;
+import com.zappcomments.zappcomments.commentservice.api.model.CommentOutput;
+import com.zappcomments.zappcomments.commentservice.common.IdGenerator;
+import com.zappcomments.zappcomments.commentservice.domain.model.Comment;
+import com.zappcomments.zappcomments.commentservice.domain.model.SensorId;
+import com.zappcomments.zappcomments.commentservice.domain.repository.CommentRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/comments")
+@RequiredArgsConstructor
+public class CommentController {
+
+    private final CommentRepository commentRepository;
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public CommentOutput create(@RequestBody CommentInput input) {
+
+        Comment comment = Comment.builder()
+                .id(new SensorId(IdGenerator.generateTSID()))
+                .text(input.getText())
+                .author(input.getAuthor())
+                .build();
+
+        comment = commentRepository.saveAndFlush(comment);
+
+        return CommentOutput.builder()
+                .id(comment.getId().getValue())
+                .text(comment.getText())
+                .author(comment.getAuthor())
+                .createdAt(comment.getCreatedAt())
+                .build();
+
+    }
+}
