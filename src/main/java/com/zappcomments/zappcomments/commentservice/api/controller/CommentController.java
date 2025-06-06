@@ -68,4 +68,13 @@ public class CommentController {
                 .createdAt(comment.getCreatedAt())
                 .build());
     }
+
+    @DeleteMapping("{commentId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable TSID commentId) {
+        Comment comment = commentRepository.findById(new CommentId(commentId))
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        commentRepository.delete(comment);
+    }
 }
