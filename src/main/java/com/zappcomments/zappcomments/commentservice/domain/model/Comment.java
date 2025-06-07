@@ -1,5 +1,6 @@
 package com.zappcomments.zappcomments.commentservice.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
