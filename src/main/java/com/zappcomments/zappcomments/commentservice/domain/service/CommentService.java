@@ -12,32 +12,30 @@ import com.zappcomments.zappcomments.commentservice.domain.model.CommentId;
 import com.zappcomments.zappcomments.commentservice.domain.repository.CommentRepository;
 import io.hypersistence.tsid.TSID;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CommentService {
-
-    private static final Logger logger = LoggerFactory.getLogger(CommentService.class);
 
     private final CommentRepository commentRepository;
     private final CommentClient commentClient;
 
     public CommentOutput create(CommentInput input) {
-        logger.info("Creating comment: {}", input);
+        log.info("Creating comment: {}", input);
         Comment comment = Comment.builder()
                 .id(new CommentId(IdGenerator.generateTSID()))
                 .text(input.getText())
                 .author(input.getAuthor())
                 .build();
 
-        logger.info("Comment created: {}", comment);
+        log.info("Comment created: {}", comment);
         ModerationOutput res = commentClient.moderateComment(
                 ModerationInput.builder()
                         .text(comment.getText())
@@ -45,38 +43,38 @@ public class CommentService {
                         .build());
 
         if (!res.isApproved()) {
-            logger.warn("Comment not approved: {}. Reason: {}", comment.getText(), res.getReason());
+            log.warn("Comment not approved: {}. Reason: {}", comment.getText(), res.getReason());
             throw new CommentNotApprovedException("Comment not approved by moderation");
         }
 
-        logger.info("Comment approved: {}", comment.getText());
+        log.info("Comment approved: {}", comment.getText());
         comment = commentRepository.saveAndFlush(comment);
 
-        logger.info("Comment saved: {}", comment);
+        log.info("Comment saved: {}", comment);
         return getBuild(comment);
     }
 
     public CommentOutput getOne(TSID commentId) {
-        logger.info("Fetching comment with ID: {}", commentId);
+        log.info("Fetching comment with ID: {}", commentId);
         Comment comment = getComment(commentId);
-        logger.info("Comment found: {}", comment);
+        log.info("Comment found: {}", comment);
         return getBuild(comment);
     }
 
     public Page<CommentOutput> getAll(Pageable pageable) {
-        logger.info("Fetching all comments with pagination: {}", pageable);
+        log.info("Fetching all comments with pagination: {}", pageable);
         Page<Comment> res = commentRepository.findAll(pageable);
 
-        logger.info("Comments fetched: {} items", res.getTotalElements());
+        log.info("Comments fetched: {} items", res.getTotalElements());
         return res.map(CommentService::getBuild);
     }
 
     public void delete(TSID commentId) {
-        logger.info("Fetching comment for deletion: {}", commentId);
+        log.info("Fetching comment for deletion: {}", commentId);
         Comment comment = getComment(commentId);
-        logger.info("Comment found for deletion: {}", comment);
+        log.info("Comment found for deletion: {}", comment);
         commentRepository.delete(comment);
-        logger.info("Comment deleted: {}", commentId);
+        log.info("Comment deleted: {}", commentId);
     }
 
 
