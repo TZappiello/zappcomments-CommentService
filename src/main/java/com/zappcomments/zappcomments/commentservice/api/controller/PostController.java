@@ -7,9 +7,12 @@ import com.zappcomments.zappcomments.commentservice.domain.model.Post;
 import com.zappcomments.zappcomments.commentservice.domain.model.PostId;
 import com.zappcomments.zappcomments.commentservice.domain.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import static com.zappcomments.zappcomments.commentservice.rabbitmq.RabbitMQConfig.TEXT_PROCESSOR_SERVICE_POST_PROCESSING;
 
 @RestController
 @RequestMapping("/api/posts")
@@ -17,10 +20,13 @@ import org.springframework.web.bind.annotation.*;
 public class PostController {
 
     private final PostRepository postRepository;
+    private final RabbitTemplate rabbitTemplate;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public PostOutput create(@RequestBody @Validated PostInput input) {
+
+
         Post post = Post.builder()
                 .id(new PostId(IdGenerator.generateTSID()))
                 .title(input.getTitle())
