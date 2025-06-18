@@ -23,7 +23,7 @@ public class RabbitMQListener {
     public void handlerPostProcessor(@Payload PostData postData) {
 
         this.postData = PostData.builder()
-                .id(postData.getId())
+                .postId(postData.getPostId())
                 .wordCount(postData.getWordCount())
                 .calculatedValue(postData.getCalculatedValue())
                 .build();

@@ -9,7 +9,7 @@ import java.util.UUID;
 @Builder
 public class PostData {
 
-    private UUID id;
+    private UUID postId;
     private Integer wordCount;
     private Double calculatedValue;
 }
