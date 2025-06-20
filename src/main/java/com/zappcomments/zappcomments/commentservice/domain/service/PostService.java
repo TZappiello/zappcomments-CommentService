@@ -9,7 +9,6 @@ import com.zappcomments.zappcomments.commentservice.rabbitmq.RabbitMQListener;
 import io.hypersistence.tsid.TSID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.amqp.core.MessagePostProcessor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -102,5 +101,15 @@ public class PostService {
                 .wordCount(post.getWordCount())
                 .calculatedValue(post.getCalculatedValue())
                 .build();
+    }
+
+    public void delete(TSID postId) {
+
+        log.info("Fetching comment for deletion: {}", postId);
+        Post post = getPost(postId);
+        log.info("Comment found for deletion: {}", post);
+        postRepository.delete(post);
+        log.info("Comment deleted: {}", postId);
+
     }
 }

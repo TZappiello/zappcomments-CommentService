@@ -1,6 +1,5 @@
 package com.zappcomments.zappcomments.commentservice.api.controller;
 
-import com.zappcomments.zappcomments.commentservice.api.model.CommentOutput;
 import com.zappcomments.zappcomments.commentservice.api.model.PostInput;
 import com.zappcomments.zappcomments.commentservice.api.model.PostOutput;
 import com.zappcomments.zappcomments.commentservice.api.model.PostSummaryOutput;
@@ -34,5 +33,12 @@ public class PostController {
     @GetMapping
     public Page<PostSummaryOutput> getAll(@PageableDefault Pageable pageable) {
         return postService.getAll(pageable);
+    }
+
+
+    @DeleteMapping("{postId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable TSID postId) {
+        postService.delete(postId);
     }
 }
