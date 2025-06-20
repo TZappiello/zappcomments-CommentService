@@ -8,11 +8,15 @@ import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.Map;
+
 @Configuration
 public class RabbitMQConfig {
 
     public static final String TEXT_PROCESSOR_SERVICE_POST_PROCESSING = "text-processor-service.post-processing.v1.e";
-    public static final String POST_PROCESSOR_SERVICE_POST_TRANSFORM = "post-service.post-processing-result.v1.q";
+    public static final String POST_TRANSFORM = "post-service.post-processing-result.v1";
+    public static final String POST_PROCESSOR_SERVICE_POST_TRANSFORM = POST_TRANSFORM +".q";
+    public static final String DEAD_LETTER_QUEUE_SERVICE_POST_TRANSFORM = POST_TRANSFORM + ".dlq";
 
     @Bean
     public RabbitAdmin rabbitAdmin(ConnectionFactory factory){
@@ -29,10 +33,18 @@ public class RabbitMQConfig {
         return ExchangeBuilder.fanoutExchange(TEXT_PROCESSOR_SERVICE_POST_PROCESSING).build();
     }
 
-
     @Bean
     public Queue queuePostsTransform() {
-        return QueueBuilder.durable(POST_PROCESSOR_SERVICE_POST_TRANSFORM).build();
+        Map<String, Object> args = Map.of(
+            "x-dead-letter-exchange", "",
+            "x-dead-letter-routing-key", DEAD_LETTER_QUEUE_SERVICE_POST_TRANSFORM
+        );
+        return QueueBuilder.durable(POST_PROCESSOR_SERVICE_POST_TRANSFORM).withArguments(args).build();
+    }
+
+    @Bean
+    public Queue deadLetterQueuePostsTransform() {
+        return QueueBuilder.durable(DEAD_LETTER_QUEUE_SERVICE_POST_TRANSFORM).build();
     }
 
     public FanoutExchange exchange() {
